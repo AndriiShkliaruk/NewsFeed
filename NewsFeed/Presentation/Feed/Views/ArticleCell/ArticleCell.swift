@@ -17,11 +17,6 @@ class ArticleCell: UITableViewCell {
     
     static let identifier = "ArticleCell"
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-    }
-    
     func configure(with article: Article) {
         titleLabel.text = article.title
         descriptionLabel.text = article.description

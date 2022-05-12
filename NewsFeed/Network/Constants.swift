@@ -10,11 +10,11 @@ import Foundation
 enum StringConstants: String, Stringable {
     case scheme = "https"
     case host = "newsapi.org"
-    case apiKey = "3168af4cb88d4eb3a94e81edc48f5af4"
+    case apiKey = "d439eb3365304c5d88fa5e8399a36cdb"
 }
 
 enum IntConstants: Int {
-    case pageSize = 10
+    case pageSize = 15
 }
 
 enum NewsAPIPath: String, Stringable {

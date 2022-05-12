@@ -16,6 +16,13 @@ class FeedCoordinator: Coordinator {
     
     func start() {
         let viewController = FeedViewController.instantiate()
+        viewController.coordinator = self
         navigationController.pushViewController(viewController, animated: false)
+    }
+    
+    func moveToArticle(with url: String) {
+        let viewController = ArticleViewController.instantiate()
+        viewController.url = URL(string: url)
+        navigationController.pushViewController(viewController, animated: true)
     }
 }
