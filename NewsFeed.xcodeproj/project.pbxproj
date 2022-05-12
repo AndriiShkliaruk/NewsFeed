@@ -35,6 +35,7 @@
 		F94B477D282CFA7B00AE4967 /* ArticleViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F94B477C282CFA7B00AE4967 /* ArticleViewController.storyboard */; };
 		F94B4781282D0B7B00AE4967 /* LoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94B477F282D0B7B00AE4967 /* LoadingCell.swift */; };
 		F94B4782282D0B7B00AE4967 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F94B4780282D0B7B00AE4967 /* LoadingCell.xib */; };
+		F94B4787282D7B3600AE4967 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94B4786282D7B3600AE4967 /* ImageLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		F94B477C282CFA7B00AE4967 /* ArticleViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ArticleViewController.storyboard; sourceTree = "<group>"; };
 		F94B477F282D0B7B00AE4967 /* LoadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCell.swift; sourceTree = "<group>"; };
 		F94B4780282D0B7B00AE4967 /* LoadingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingCell.xib; sourceTree = "<group>"; };
+		F94B4786282D7B3600AE4967 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				F94B475B282AE3F300AE4967 /* Endpoint.swift */,
 				F94B475F282C1B8900AE4967 /* DataLoader.swift */,
 				F94B4772282C321D00AE4967 /* NewsAPIManager.swift */,
+				F94B4786282D7B3600AE4967 /* ImageLoader.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 				F94B4743282AD23300AE4967 /* Coordinator.swift in Sources */,
 				F94B4747282AD2C400AE4967 /* TabBarCoordinator.swift in Sources */,
 				F94B4765282C1E2E00AE4967 /* Article.swift in Sources */,
+				F94B4787282D7B3600AE4967 /* ImageLoader.swift in Sources */,
 				F94B4754282AD51900AE4967 /* FavouritesViewController.swift in Sources */,
 				F94B4778282C376500AE4967 /* ArticleCell.swift in Sources */,
 				F94B477B282CFA5900AE4967 /* ArticleViewController.swift in Sources */,

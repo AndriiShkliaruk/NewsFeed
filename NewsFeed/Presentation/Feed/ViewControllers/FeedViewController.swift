@@ -17,6 +17,7 @@ class FeedViewController: UIViewController, Storyboarded {
     var coordinator: FeedCoordinator?
     private var timer: Timer?
     private let viewModel = FeedViewModel()
+    private let imageLoader = ImageLoader()
     private lazy var spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -95,7 +96,13 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: ArticleCell.identifier, for: indexPath) as? ArticleCell else { return UITableViewCell() }
+            
             cell.configure(with: viewModel.articles[indexPath.row])
+            if let urlToImage = viewModel.articles[indexPath.row].urlToImage {
+                imageLoader.get(from: urlToImage) { image in
+                    cell.setImage(image: image)
+                }
+            }
             return cell
         } else {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: LoadingCell.identifier, for: indexPath) as? LoadingCell else { return UITableViewCell() }

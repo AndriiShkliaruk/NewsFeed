@@ -23,4 +23,8 @@ class ArticleCell: UITableViewCell {
         authorLabel.text = article.author
         sourceLabel.text = article.source.name
     }
+    
+    func setImage(image: UIImage) {
+        mainImageView.image = image
+    }
 }

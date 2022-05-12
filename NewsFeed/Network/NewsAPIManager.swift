@@ -35,4 +35,16 @@ print(url)
             }
         }
     }
+    
+//    func loadData(from url: String, completion: @escaping (Data) -> Void) {
+//        guard let url = URL(string: url) else { return }
+//        DataLoader.get(from: url) { (result: Result<Data, DataError>) in
+//            switch result {
+//            case .failure(let error):
+//                print(error.localizedDescription)
+//            case .success(let data):
+//                completion(data)
+//            }
+//        }
+//    }
 }
