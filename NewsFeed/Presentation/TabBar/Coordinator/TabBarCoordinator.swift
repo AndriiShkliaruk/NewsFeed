@@ -47,16 +47,24 @@ class TabBarCoordinator: Coordinator {
     }
     
     func start() {
+        feedCoordinator.parentCoordinator = self
         feedCoordinator.start()
         let feedViewController = feedCoordinator.navigationViewController
         feedViewController.tabBarItem = generateTabBarItem(.feed)
          
+        favouritesCoordinator.parentCoordinator = self
         favouritesCoordinator.start()
         let favouritesViewController = favouritesCoordinator.navigationViewController
         favouritesViewController.tabBarItem = generateTabBarItem(.favourites)
         
         tabBarViewController.viewControllers = [feedViewController, favouritesViewController]
         navigationController.pushViewController(tabBarViewController, animated: true)
+    }
+    
+    func presentWebViewArticle(with url: String) {
+        let viewController = ArticleViewController.instantiate()
+        viewController.url = URL(string: url)
+        navigationController.present(viewController, animated: true)
     }
     
     private func generateTabBarItem(_ item: TabBarItem) -> UITabBarItem {

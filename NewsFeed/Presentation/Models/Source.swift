@@ -11,7 +11,7 @@ struct SourcesResponse: Decodable {
     let sources: [Source]
 }
 
-struct Source: Decodable {
+struct Source: Decodable, Hashable {
     let id: String?
     let name: String
 }

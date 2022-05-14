@@ -7,17 +7,18 @@
 
 import UIKit
 
-protocol FeedViewControllerDelegate {
-    func onFetchCompleted()
-}
-
 class FeedViewController: UIViewController, Storyboarded {
     @IBOutlet private weak var articlesTableView: UITableView!
     
     var coordinator: FeedCoordinator?
     private var timer: Timer?
     private let viewModel = FeedViewModel()
-    private let imageLoader = ImageLoader()
+    
+    private lazy var filtersBarButtonItem: UIBarButtonItem = {
+        let icon = UIImage(systemName: viewModel.filtersIcon)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        return UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(filtersBarButtonTapped))
+    }()
+    
     private lazy var spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -31,6 +32,12 @@ class FeedViewController: UIViewController, Storyboarded {
         setupSearchBar()
         setupSpinner()
         setupRefreshControl()
+        setupNavigationBar()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.fetchArticles()
     }
     
     private func setupArticlesTableView() {
@@ -38,7 +45,6 @@ class FeedViewController: UIViewController, Storyboarded {
         articlesTableView.dataSource = self
         articlesTableView.register(UINib(nibName: ArticleCell.identifier, bundle: nil), forCellReuseIdentifier: ArticleCell.identifier)
         articlesTableView.register(UINib(nibName: LoadingCell.identifier, bundle: nil), forCellReuseIdentifier: LoadingCell.identifier)
-        viewModel.fetchFirstPage()
     }
     
     private func setupSearchBar() {
@@ -54,6 +60,7 @@ class FeedViewController: UIViewController, Storyboarded {
         view.addSubview(spinner)
         spinner.centerXAnchor.constraint(equalTo: articlesTableView.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: articlesTableView.centerYAnchor).isActive = true
+        spinner.startAnimating()
     }
     
     private func setupRefreshControl() {
@@ -61,28 +68,21 @@ class FeedViewController: UIViewController, Storyboarded {
         articlesTableView.refreshControl?.addTarget(self, action: #selector(refreshArticles), for: .valueChanged)
     }
     
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = filtersBarButtonItem
+    }
+    
     @objc private func refreshArticles() {
         viewModel.fetchFirstPage()
         articlesTableView.refreshControl?.endRefreshing()
     }
     
-    private func isLoadingCell(for indexPath: IndexPath) -> Bool {
-        return indexPath.row >= viewModel.articles.count
+    @objc private func filtersBarButtonTapped() {
+        coordinator?.moveToFilters(with: viewModel.filtersViewModel, delegate: self)
     }
 }
 
 extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView == articlesTableView, viewModel.total > 0 else { return }
-        let height = scrollView.frame.size.height
-        let contentYoffset = scrollView.contentOffset.y
-        let distanceFromBottom = scrollView.contentSize.height - contentYoffset
-        if distanceFromBottom < height {
-            viewModel.fetchNextPage()
-        }
-    }
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -96,13 +96,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: ArticleCell.identifier, for: indexPath) as? ArticleCell else { return UITableViewCell() }
-            
-            cell.configure(with: viewModel.articles[indexPath.row])
-            if let urlToImage = viewModel.articles[indexPath.row].urlToImage {
-                imageLoader.get(from: urlToImage) { image in
-                    cell.setImage(image: image)
-                }
-            }
+            cell.configure(for: .feed, viewModel: viewModel.articles[indexPath.row], delegate: self)
             return cell
         } else {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: LoadingCell.identifier, for: indexPath) as? LoadingCell else { return UITableViewCell() }
@@ -116,7 +110,15 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        coordinator?.moveToArticle(with: viewModel.articles[indexPath.row].url)
+        tableView.deselectRow(at: indexPath, animated: false)
+        coordinator?.parentCoordinator?.presentWebViewArticle(with: viewModel.articles[indexPath.row].url)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.section == tableView.numberOfSections - 1 &&
+            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            viewModel.fetchNextPage()
+        }
     }
 }
 
@@ -130,9 +132,24 @@ extension FeedViewController: UISearchBarDelegate {
     }
 }
 
-extension FeedViewController: FeedViewControllerDelegate {
+extension FeedViewController: FiltersDelegate {
+    func applyFilters() {
+        articlesTableView.contentOffset = .zero
+        viewModel.didApplyFilters()
+    }
+}
+
+extension FeedViewController: FetchCompletionDelegate {
     func onFetchCompleted() {
-        articlesTableView.reloadData()
-        spinner.stopAnimating()
+        DispatchQueue.main.async {
+            self.articlesTableView.reloadData()
+            self.spinner.stopAnimating()
+        }
+    }
+}
+
+extension FeedViewController: ArticleDatabaseDelegate {
+    func updateArticleInDatabase(_ articleViewModel: ArticleViewModel) {
+        viewModel.updateArticleInDatabase(articleViewModel)
     }
 }

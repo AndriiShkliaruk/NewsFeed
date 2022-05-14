@@ -9,6 +9,7 @@ import UIKit
 
 class FavouritesCoordinator: Coordinator {
     var navigationController: UINavigationController
+    var parentCoordinator: TabBarCoordinator?
     
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -16,6 +17,7 @@ class FavouritesCoordinator: Coordinator {
     
     func start() {
         let viewController = FavouritesViewController.instantiate()
+        viewController.coordinator = self
         navigationController.pushViewController(viewController, animated: false)
     }
 }

@@ -16,4 +16,8 @@ extension Coordinator {
     var navigationViewController: UIViewController {
         navigationController
     }
+    
+    func back() {
+        navigationController.popViewController(animated: true)
+    }
 }

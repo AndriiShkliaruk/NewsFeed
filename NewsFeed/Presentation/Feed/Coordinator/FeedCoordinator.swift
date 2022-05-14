@@ -9,6 +9,7 @@ import UIKit
 
 class FeedCoordinator: Coordinator {
     var navigationController: UINavigationController
+    var parentCoordinator: TabBarCoordinator?
     
     init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -20,9 +21,18 @@ class FeedCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: false)
     }
     
-    func moveToArticle(with url: String) {
-        let viewController = ArticleViewController.instantiate()
-        viewController.url = URL(string: url)
+    func moveToFilters(with viewModel: FiltersViewModel, delegate: FiltersDelegate) {
+        let viewController = FiltersViewController.instantiate()
+        viewController.coordinator = self
+        viewController.viewModel = viewModel
+        viewController.delegate = delegate
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    func moveToFilter(viewModel: FilterModeViewModel) {
+        let viewController = FilterModeViewController.instantiate()
+        viewController.viewModel = viewModel
+        viewController.mode = viewModel.mode
         navigationController.pushViewController(viewController, animated: true)
     }
 }

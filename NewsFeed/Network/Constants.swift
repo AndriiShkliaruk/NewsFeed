@@ -10,7 +10,7 @@ import Foundation
 enum StringConstants: String, Stringable {
     case scheme = "https"
     case host = "newsapi.org"
-    case apiKey = "d439eb3365304c5d88fa5e8399a36cdb"
+    case apiKey = "3168af4cb88d4eb3a94e81edc48f5af4"
 }
 
 enum IntConstants: Int {
@@ -36,10 +36,10 @@ enum NewsAPIQueryItem: String, Stringable {
     }
 }
 
-enum Category: String, Stringable {
+enum Category: String, CaseIterable, Stringable {
     case business, entertainment, general, health, science, sports, technology
 }
 
-enum Country: String, Stringable {
+enum Country: String, CaseIterable, Stringable {
     case ae, ar, at, au, be, bg, br, ca, ch, cn, co, cu, cz, de, eg, fr, gb, gr, hk, hu, id, ie, il, it, jp, kr, lt, lv, ma, mx, my, ng, nl, no, nz, ph, pl, pt, ro, rs, ru, sa, se, sg, si, sk, th, tr, tw, ua, us, ve, za
 }

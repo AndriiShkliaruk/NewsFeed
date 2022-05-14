@@ -15,16 +15,18 @@ class ImageLoader {
         if let image = cache.object(forKey: NSString(string: urlToImage)) {
             completion(image)
         } else {
-            utilityQueue.async {
-                guard let url = URL(string: urlToImage) else { return }
-                guard let data = try? Data(contentsOf: url) else { return }
-                guard let image = UIImage(data: data) else { return }
+            guard let url = URL(string: urlToImage) else { return }
+            
+            let dataTask = URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
+                guard let imageData = data else { return }
+                guard let image = UIImage(data: imageData) else { return }
                 
                 DispatchQueue.main.async {
                     completion(image)
-                    self.cache.setObject(image, forKey: NSString(string: urlToImage))
+                    self?.cache.setObject(image, forKey: NSString(string: urlToImage))
                 }
             }
+            dataTask.resume()
         }
     }
 }
