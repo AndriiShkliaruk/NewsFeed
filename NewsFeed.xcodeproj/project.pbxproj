@@ -142,6 +142,7 @@
 				F94B473B282AD11900AE4967 /* Protocols */,
 				F94B473A282AD10500AE4967 /* Network */,
 				F94B4739282AD0F200AE4967 /* Presentation */,
+				F94B4761282C1DF100AE4967 /* Models */,
 				F94B4725282ACBEE00AE4967 /* AppDelegate.swift */,
 				F94B4727282ACBEE00AE4967 /* SceneDelegate.swift */,
 				F94B472E282ACBF000AE4967 /* Assets.xcassets */,
@@ -157,7 +158,6 @@
 				F94B474D282AD41100AE4967 /* TabBar */,
 				F94B474C282AD40300AE4967 /* Feed */,
 				F94B474E282AD41900AE4967 /* Favourites */,
-				F94B4761282C1DF100AE4967 /* Models */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
