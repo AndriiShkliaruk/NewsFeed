@@ -14,10 +14,11 @@ class FeedViewModel {
     private var storedArticles = [ArticleViewModel]()
     let apiManager = NewsAPIManager()
     let filtersViewModel = FiltersViewModel()
-    var delegate: FetchCompletionDelegate?
+    var delegate: UpdateCompletionDelegate?
     
     var total = 0
-    var articles: [ArticleViewModel] = []
+    var articlesViewModels = [ArticleViewModel]()
+    private var articles = [Article]()
     
     private var currentPage = 1
     private var query: String?
@@ -43,16 +44,17 @@ class FeedViewModel {
     func fetchArticles() {
         guard !isFetching else { return }
         isFetching = true
-        getStoredArticles()
+        
         apiManager.fetchArticles(page: currentPage, query: query, sources: sources, country: country, category: category) { [unowned self] apiResponse in
-            self.total = apiResponse.total
             if isFirstPage {
-                self.articles = articleViewModels(from: apiResponse.articles)
-            } else {
-                self.articles.append(contentsOf: articleViewModels(from: apiResponse.articles))
+                self.articles.removeAll()
             }
-            self.updateArticlesStates()
-            self.delegate?.onFetchCompleted()
+            self.articles.append(contentsOf: apiResponse.articles)
+            self.total = apiResponse.total
+            self.generateArticlesViewModels()
+            DispatchQueue.main.async {
+                self.updateArticlesViewModelsStates()
+            }
             isFetching = false
         }
     }
@@ -73,14 +75,16 @@ class FeedViewModel {
         fetchFirstPage()
     }
     
-    private func articleViewModels(from articles: [Article]) -> [ArticleViewModel] {
-        return articles.map { ArticleViewModel($0, imageLoader: imageLoader) }
-    }
-    
-    private func updateArticlesStates() {
-        articles.forEach { article in
+    func updateArticlesViewModelsStates() {
+        getStoredArticles()
+        articlesViewModels.forEach { article in
             article.isSaved = storedArticles.contains(where: { $0.title == article.title }) ? true : false
         }
+        delegate?.onUpdateCompleted()
+    }
+    
+    private func generateArticlesViewModels() {
+        articlesViewModels = articles.map { ArticleViewModel($0, imageLoader: imageLoader) }
     }
     
     private func getStoredArticles() {

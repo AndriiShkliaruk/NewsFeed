@@ -33,11 +33,13 @@ class FeedViewController: UIViewController, Storyboarded {
         setupSpinner()
         setupRefreshControl()
         setupNavigationBar()
+        viewModel.fetchFirstPage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.fetchArticles()
+        guard !viewModel.articlesViewModels.isEmpty else { return }
+        viewModel.updateArticlesViewModelsStates()
     }
     
     private func setupArticlesTableView() {
@@ -88,7 +90,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let articleCellsCount = viewModel.articles.count
+        let articleCellsCount = viewModel.articlesViewModels.count
         let loadingCellsCount = viewModel.hasOneMorePage ? 1 : 0
         return section == 0 ? articleCellsCount : loadingCellsCount
     }
@@ -96,7 +98,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: ArticleCell.identifier, for: indexPath) as? ArticleCell else { return UITableViewCell() }
-            cell.configure(for: .feed, viewModel: viewModel.articles[indexPath.row], delegate: self)
+            cell.configure(for: .feed, viewModel: viewModel.articlesViewModels[indexPath.row], delegate: self)
             return cell
         } else {
             guard let cell = articlesTableView.dequeueReusableCell(withIdentifier: LoadingCell.identifier, for: indexPath) as? LoadingCell else { return UITableViewCell() }
@@ -111,7 +113,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
-        coordinator?.parentCoordinator?.presentWebViewArticle(with: viewModel.articles[indexPath.row].url)
+        coordinator?.parentCoordinator?.presentWebViewArticle(with: viewModel.articlesViewModels[indexPath.row].url)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -139,12 +141,10 @@ extension FeedViewController: FiltersDelegate {
     }
 }
 
-extension FeedViewController: FetchCompletionDelegate {
-    func onFetchCompleted() {
-        DispatchQueue.main.async {
-            self.articlesTableView.reloadData()
-            self.spinner.stopAnimating()
-        }
+extension FeedViewController: UpdateCompletionDelegate {
+    func onUpdateCompleted() {
+        articlesTableView.reloadData()
+        spinner.stopAnimating()
     }
 }
 

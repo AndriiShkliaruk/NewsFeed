@@ -20,7 +20,7 @@ enum FilterMode: String, CaseIterable {
 class FilterModeViewModel {
     let apiManager = NewsAPIManager()
     var mode: FilterMode?
-    var delegate: FetchCompletionDelegate?
+    var delegate: UpdateCompletionDelegate?
     
     private let categories: [FilterItemViewModel]
     private let countries: [FilterItemViewModel]
@@ -75,7 +75,7 @@ class FilterModeViewModel {
             
             updateSources(newSourcesViewModels)
             DispatchQueue.main.async {
-                self.delegate?.onFetchCompleted()
+                self.delegate?.onUpdateCompleted()
             }
         }
     }

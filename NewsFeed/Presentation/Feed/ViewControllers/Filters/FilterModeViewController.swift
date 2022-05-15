@@ -67,8 +67,8 @@ extension FilterModeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension FilterModeViewController: FetchCompletionDelegate {
-    func onFetchCompleted() {
+extension FilterModeViewController: UpdateCompletionDelegate {
+    func onUpdateCompleted() {
         filterItemsTableView.reloadData()
         spinner.stopAnimating()
     }
